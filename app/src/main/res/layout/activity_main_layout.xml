@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-    </data>
+    <data> </data>
 
-    <RelativeLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageView"
@@ -14,6 +20,23 @@
             android:layout_height="300dp"
             android:src="@drawable/baseline_image_24"
             android:scaleType="centerCrop" />
+
+        <VideoView
+            android:id="@+id/videoPlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:visibility="gone" />
+
+
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_play"
+            android:visibility="gone" />
+
 
         <TextView
             android:id="@+id/titleTextView"
@@ -44,14 +67,7 @@
             android:layout_marginTop="16dp"
             android:text="overview"/>
 
-        <ImageButton
-            android:id="@+id/playButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/imageView"
-            android:layout_centerInParent="true"
-            android:background="@null"
-            android:src="@android:drawable/ic_media_play"
-            android:visibility="gone" />
     </RelativeLayout>
+    </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

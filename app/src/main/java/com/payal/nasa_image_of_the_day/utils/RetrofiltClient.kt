@@ -3,7 +3,6 @@ package com.payal.nasa_image_of_the_day.utils
 import com.payal.nasa_image_of_the_day.api.NasaPictureOfDayApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 object RetrofiltClient {
 

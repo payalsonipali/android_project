@@ -6,6 +6,5 @@ data class ApiResponse(
     val explanation: String?,
     val url: String?,
     val media_type: String?,
-    val hdurl: String?,
-    val serviceVersion: String?,
+    val thumbnail_url:String?,
 )
