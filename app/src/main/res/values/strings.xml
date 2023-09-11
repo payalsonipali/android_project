@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Unify</string>
+    <string name="my_string">The amount will be blocked when ride is booked with safeboards, subject to above mentioned limit and validity.
+The limit is upto</string>
+</resources>
