@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        tools:context=".view.MoviesFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textColor="@color/white"
+                    android:layout_marginVertical="10dp"
+                    android:textSize="30sp"
+                    android:layout_centerVertical="true"
+                    android:text="Watch Now" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_search_24"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null" />
+
+            </RelativeLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40sp"
+                        android:text="Now Playing"
+                        android:background="@drawable/rounded_bg"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"
+                        android:layout_marginVertical="10dp"
+                        android:id="@+id/now_playing" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40sp"
+                        android:text="Popular"
+                        android:background="@drawable/rounded_bg"
+                        android:paddingHorizontal="12dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:layout_marginVertical="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/popular" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40sp"
+                        android:text="Top Rated"
+                        android:background="@drawable/rounded_bg"
+                        android:paddingHorizontal="12dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:layout_marginVertical="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/top_rated" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40sp"
+                        android:text="Upcoming"
+                        android:background="@drawable/rounded_bg"
+                        android:paddingHorizontal="12dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:layout_marginVertical="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/upcoming" />
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recycler"
+                tools:listitem="@layout/movie_item"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>
