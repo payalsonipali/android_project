@@ -43,7 +43,6 @@ import com.payal.unify.model.CardItem
 import com.payal.unify.ui.theme.gray
 import com.payal.unify.ui.theme.light_gray
 import com.payal.unify.ui.theme.light_orange
-import com.payal.unify.ui.theme.off_white
 import com.payal.unify.ui.theme.orange
 import com.payal.unify.viewmodel.MandateDetailsViewModel
 
@@ -61,7 +60,7 @@ fun mandateDetails(viewModel: MandateDetailsViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(off_white)
+                .background(Color.White)
                 .padding(16.dp)
         ) {
             Column(
@@ -103,7 +102,7 @@ fun topBar() {
                 },
 
                 ) {
-                showIcon(R.drawable.baseline_arrow_back_ios_new_24, "Back", orange)
+                showLocalIcon(R.drawable.baseline_arrow_back_ios_new_24, "Back", orange)
             }
         },
     )
@@ -166,7 +165,7 @@ fun Frequency(frequency: String) {
 }
 
 @Composable
-fun setText(text:String, weight:FontWeight){
+fun setText(text: String, weight: FontWeight) {
     Text(
         text = text,
         color = Color.Black,
@@ -218,7 +217,7 @@ fun Divider() {
 }
 
 @Composable
-fun setNugdeText(amount: String){
+fun setNugdeText(amount: String) {
     Surface(
         modifier = Modifier.padding(start = 8.dp),
         color = Color.Transparent
@@ -308,12 +307,9 @@ fun SelectedPaymentOption(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            AsyncImage(
-                model = cardItem.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize() // Set both width and height to fill the available space
+            setNetworkImg(
+                cardItem.imageUrl, "image", ContentScale.Fit, Modifier
+                    .fillMaxSize()
                     .clip(MaterialTheme.shapes.medium)
             )
         }
@@ -337,7 +333,7 @@ fun PayUsing(cardItems: List<CardItem>, selectedCardIndex: Int) {
 
     PayUsingRow(
         cardItems[selectedCardIndex].title,
-        R.drawable.baseline_arrow_back_ios_new_24,
+        cardItems[selectedCardIndex].imageUrl,
         R.drawable.baseline_keyboard_arrow_right_24
     )
 }
@@ -345,39 +341,68 @@ fun PayUsing(cardItems: List<CardItem>, selectedCardIndex: Int) {
 @Composable
 fun PayUsingRow(
     text: String,
-    startIcon: Int,
+    startIcon: String,
     endIcon: Int,
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
-            .border(
-                width = 0.6.dp,
-                color = orange, // Change the border color as needed
-                shape = RoundedCornerShape(10.dp) // Set corner radius to 0.dp
-            )
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(10.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(10.dp),
+                clip = true
+            ),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                .border(
+                    width = 0.6.dp,
+                    color = orange, // Change the border color as needed
+                    shape = RoundedCornerShape(10.dp) // Set corner radius to 0.dp
+                )
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            showIcon(startIcon, "Back", orange)
-            Text(text = text, color = Color.Black)
-        }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                setNetworkImg(startIcon, "icon", ContentScale.Fit, Modifier.size(24.dp))
+                Text(text = text, color = Color.Black)
+            }
 
-        showIcon(endIcon, "Back", gray)
+            showLocalIcon(endIcon, "Back", gray)
+        }
     }
 }
 
 @Composable
-fun showIcon(icon: Int, contentDescription: String, tint: Color) {
+fun setNetworkImg(
+    image: String,
+    contentDescription: String,
+    contentScale: ContentScale,
+    modifier: Modifier
+) {
+    AsyncImage(
+        model = image,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun showLocalIcon(icon: Int, contentDescription: String, tint: Color) {
     Icon(
         painter = painterResource(id = icon),
         contentDescription = contentDescription,
-        tint = tint
+        tint = tint,
+        modifier = Modifier.size(26.dp)
     )
 }
