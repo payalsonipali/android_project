@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(FavoritesFragment)
                     true
                 }
-                R.id.profile -> {
+                R.id.profile ->{
                     Log.d("TAGGG","profile clicked")
                     loadFragment(ProfileFragment)
                     true
