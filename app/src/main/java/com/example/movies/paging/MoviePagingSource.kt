@@ -7,6 +7,7 @@ import com.example.movies.model.MovieDetail
 import com.example.movies.apis.MovieApi
 import com.example.movies.viewmodel.MovieViewModel
 import java.lang.Exception
+import javax.inject.Inject
 
 //PagingSource<page_type, api_response_type>
 class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewModel: MovieViewModel) : PagingSource<Int, MovieDetail>(){
@@ -14,7 +15,9 @@ class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewMod
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieDetail> {
         try {
             val position = params.key ?:1
-            val response = when (endPoint) {
+
+            val response =
+                when (endPoint) {
                 "now_playing" -> movieApi.getNowPlayingMovies(position)
                 "popular" -> movieApi.getPopularMovies(position)
                 "top_rated" -> movieApi.getTopRatedMovies(position)
@@ -38,7 +41,6 @@ class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewMod
                     LoadResult.Error(Exception("Failed to fetch movies, please try again"))
                 }
             }
-            Log.d("taggg","endpoint000000000000 : ${endPoint}   response : $response")
             return LoadResult.Error(Exception("Failed to fetch movies, please try again"))
 
         }catch (e:Exception){

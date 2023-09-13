@@ -2,6 +2,7 @@ package com.example.movies.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,18 +13,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movies.R
-import com.example.movies.utils.RetrofitClient
 import com.example.movies.adapter.LoaderAdapter
 import com.example.movies.adapter.MoviePagingAdapter
 import com.example.movies.databinding.FragmentMoviesBinding
 import com.example.movies.model.MovieDetail
-import com.example.movies.repository.MovieRepository
 import com.example.movies.viewmodel.MovieViewModel
-import com.example.movies.viewmodel.MovieViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MoviesFragment : Fragment(),MoviePagingAdapter.OnItemClickListener {
 
     lateinit var binding: FragmentMoviesBinding
@@ -34,13 +34,12 @@ class MoviesFragment : Fragment(),MoviePagingAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies, container, false)
         binding.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.nowPlaying.setBackgroundResource(R.drawable.rounded_green_bg)
 
+        pageviewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
 
-        pageviewModel = ViewModelProvider(this, MovieViewModelFactory(MovieRepository(RetrofitClient.movieApi))).get(MovieViewModel::class.java)
         pageviewModel.getNowPlayingMovies()
         adapter = MoviePagingAdapter(this)
         binding.recycler.adapter = adapter

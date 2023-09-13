@@ -1,26 +1,21 @@
-package com.example.movies
+package com.example.movies.view
 
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import com.example.movies.R
 import com.example.movies.databinding.ActivityMainBinding
-import com.example.movies.view.FavoritesFragment
-import com.example.movies.view.MoviesFragment
-import com.example.movies.view.ProfileFragment
-import com.example.movies.viewmodel.MainActivityViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     lateinit var binding:ActivityMainBinding
-    lateinit var viewModel:MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         loadFragment(MoviesFragment())
 
