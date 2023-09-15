@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "512833208127",
+    "project_id": "movie-a6b74",
+    "storage_bucket": "movie-a6b74.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512833208127:android:43a4cb30591266308c9d8a",
+        "android_client_info": {
+          "package_name": "com.payal.digital_movies"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8i6IRpxmz5_nN-b25BbUM1B3dhyj52Oc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
