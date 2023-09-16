@@ -75,6 +75,10 @@ class MainActivity : ComponentActivity() {
         binding.crossButton.setOnClickListener {
             clearSearchText()
         }
+
+        binding.backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun observSearchView() {
@@ -85,12 +89,8 @@ class MainActivity : ComponentActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString().trim()
-                if (query.length >= 3) {
-                    setSearchQuery(query)
-                    setSuggestions(query)
-                } else {
-                    searchAdapter.submitData(lifecycle, PagingData.empty())
-                }
+                handleCrossButtonVisibility(query)
+                handleSearchQuery(query)
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -162,6 +162,23 @@ class MainActivity : ComponentActivity() {
     private fun calculateSpanCount(): Int {
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         return if (isLandscape) 7 else 3
+    }
+
+    private fun handleCrossButtonVisibility(query:String){
+        if (query.isNotEmpty()) {
+            binding.crossButton.visibility = View.VISIBLE
+        } else {
+            binding.crossButton.visibility = View.GONE
+        }
+    }
+
+    private fun handleSearchQuery(query: String){
+        if (query.length >= 3) {
+            setSearchQuery(query)
+            setSuggestions(query)
+        } else {
+            searchAdapter.submitData(lifecycle, PagingData.empty())
+        }
     }
 
     private fun enableFirebaseCrashlytics() {
