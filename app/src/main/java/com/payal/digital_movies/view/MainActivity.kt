@@ -37,15 +37,9 @@ class MainActivity : ComponentActivity() {
 
         binding.recycler.layoutManager = GridLayoutManager(this, calculateSpanCount())
 
-        adapter = MovieAdapter()
-        searchAdapter = MovieSearchAdapter("")
-        suggestionsAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mutableListOf())
-        binding.searchEditText.setAdapter(suggestionsAdapter)
-
-        binding.recycler.adapter = adapter
-
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
 
+        initializeAdapters()
         checkLastStateOfScreen()
         observViewModel()
         observSearchView()
@@ -63,7 +57,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun observButtonClick(){
+    private fun initializeAdapters() {
+        adapter = MovieAdapter()
+        searchAdapter = MovieSearchAdapter("")
+        suggestionsAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mutableListOf())
+        binding.searchEditText.setAdapter(suggestionsAdapter)
+        binding.recycler.adapter = adapter
+    }
+
+    private fun observButtonClick() {
         binding.search.setOnClickListener {
             setSearchViewVisibility(true)
             binding.recycler.adapter = searchAdapter
@@ -74,8 +77,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun observSearchView(){
-
+    private fun observSearchView() {
+        //it will show data only if 3 characters available as written in doc
         // Handle text changes in the search EditText
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -90,11 +93,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) { }
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun observViewModel(){
+    private fun observViewModel() {
         viewModel.moviePagerFlow.observe(this) {
             adapter.submitData(lifecycle, it)
         }
@@ -107,30 +110,25 @@ class MainActivity : ComponentActivity() {
     private fun toggleSearchViewVisibility() {
         if (isSearchViewVisible) {
             setSearchViewVisibility(false)
-            searchAdapter.searchQuery = ""
             binding.searchEditText.text.clear()
-            viewModel.moviePagerFlow.value?.let { searchAdapter.submitData(lifecycle, it) }
-        } else {
-            // Show search view and hide moviePagerFlow
-            binding.toolbar.visibility = View.GONE
-            binding.searchView.visibility = View.VISIBLE
-            isSearchViewVisible = true
+            binding.recycler.adapter = adapter
+            viewModel.moviePagerFlow.value?.let { adapter.submitData(lifecycle, it) }
         }
     }
 
-    private fun checkLastStateOfScreen(){
+    private fun checkLastStateOfScreen() {
         val savedSearchQuery = viewModel.getCurrentSearchQuery()
         if (savedSearchQuery.isNotEmpty()) {
             setSearchViewVisibility(true)
             setSearchQuery(savedSearchQuery)
             binding.searchEditText.setText(savedSearchQuery)
             binding.recycler.adapter = searchAdapter
-        } else{
+        } else {
             binding.recycler.adapter = adapter
         }
     }
 
-    private fun setSuggestions(query:String){
+    private fun setSuggestions(query: String) {
         viewModel.getAllTitlesForSuggestion()
         val suggestions = viewModel.getSuggestions(query)
         suggestionsAdapter.clear()
@@ -138,22 +136,22 @@ class MainActivity : ComponentActivity() {
         suggestionsAdapter.notifyDataSetChanged()
     }
 
-    private fun setSearchQuery(searchQuery:String){
+    private fun setSearchQuery(searchQuery: String) {
         searchAdapter.searchQuery = searchQuery
         viewModel.setSearchQuery(searchQuery)
     }
 
-    private fun clearSearchText(){
+    private fun clearSearchText() {
         binding.searchEditText.text.clear()
         viewModel.setSearchQuery("")
     }
 
-    private fun setSearchViewVisibility(searchViewVisible:Boolean){
-        if(searchViewVisible){
+    private fun setSearchViewVisibility(searchViewVisible: Boolean) {
+        if (searchViewVisible) {
             binding.toolbar.visibility = View.GONE
             binding.searchView.visibility = View.VISIBLE
             isSearchViewVisible = true
-        } else{
+        } else {
             binding.toolbar.visibility = View.VISIBLE
             binding.searchView.visibility = View.GONE
             isSearchViewVisible = false
@@ -166,9 +164,8 @@ class MainActivity : ComponentActivity() {
         return if (isLandscape) 7 else 3
     }
 
-    private fun enableFirebaseCrashlytics(){
+    private fun enableFirebaseCrashlytics() {
         FirebaseApp.initializeApp(this)
-
         // Initialize Firebase Crashlytics
         val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
         firebaseCrashlytics.setCrashlyticsCollectionEnabled(true)
