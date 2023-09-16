@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.payal.digital_movies.R
 import com.payal.digital_movies.adapter.MovieAdapter
 import com.payal.digital_movies.adapter.MovieSearchAdapter
@@ -30,12 +32,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.movie_list)
 
         binding.recycler.layoutManager = GridLayoutManager(this, calculateSpanCount())
 
         adapter = MovieAdapter()
         searchAdapter = MovieSearchAdapter("")
+        suggestionsAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mutableListOf())
+        binding.searchEditText.setAdapter(suggestionsAdapter)
 
         binding.recycler.adapter = adapter
 
@@ -45,10 +50,7 @@ class MainActivity : ComponentActivity() {
         observViewModel()
         observSearchView()
         observButtonClick()
-
-        suggestionsAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mutableListOf())
-        binding.searchEditText.setAdapter(suggestionsAdapter)
-
+        enableFirebaseCrashlytics()
     }
 
     override fun onBackPressed() {
@@ -162,5 +164,13 @@ class MainActivity : ComponentActivity() {
     private fun calculateSpanCount(): Int {
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         return if (isLandscape) 7 else 3
+    }
+
+    private fun enableFirebaseCrashlytics(){
+        FirebaseApp.initializeApp(this)
+
+        // Initialize Firebase Crashlytics
+        val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+        firebaseCrashlytics.setCrashlyticsCollectionEnabled(true)
     }
 }

@@ -3,7 +3,6 @@ package com.payal.digital_movies.adapter
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.payal.digital_movies.model.Content
 import com.payal.digital_movies.R
+import com.payal.digital_movies.const.imageResourceMap
 import com.payal.digital_movies.databinding.MovieItemBinding
 
 class MovieSearchAdapter(var searchQuery:String) : PagingDataAdapter<Content, MovieSearchAdapter.MovieViewHolder>(USER_COMPARATOR) {
@@ -33,11 +33,9 @@ class MovieSearchAdapter(var searchQuery:String) : PagingDataAdapter<Content, Mo
     companion object{
         val USER_COMPARATOR = object : DiffUtil.ItemCallback<Content>() {
             override fun areItemsTheSame(oldItem: Content, newItem: Content): Boolean =
-                // User ID serves as unique ID
                 oldItem.name == newItem.name
 
             override fun areContentsTheSame(oldItem: Content, newItem: Content): Boolean =
-                // Compare full contents (note: Java users should call .equals())
                 oldItem == newItem
         }
     }
@@ -45,9 +43,7 @@ class MovieSearchAdapter(var searchQuery:String) : PagingDataAdapter<Content, Mo
     inner class MovieViewHolder(private val binding: MovieItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(movie: Content, position: Int) {
             // Highlight matching text
-            Log.d("taggg","search query : ${searchQuery}")
             if (searchQuery.isNotEmpty()) {
-                Log.d("taggg","search query not empty : ${searchQuery}")
                 binding.title.text = highlightSearchQuery(movie.name, searchQuery,
                     ContextCompat.getColor(binding.root.context, R.color.highlight_color))
             } else{
@@ -72,18 +68,4 @@ class MovieSearchAdapter(var searchQuery:String) : PagingDataAdapter<Content, Mo
         }
         return spannableString
     }
-
-    val imageResourceMap = hashMapOf(
-        "poster1.jpg" to R.drawable.poster1,
-        "poster2.jpg" to R.drawable.poster2,
-        "poster3.jpg" to R.drawable.poster3,
-        "poster4.jpg" to R.drawable.poster4,
-        "poster5.jpg" to R.drawable.poster5,
-        "poster6.jpg" to R.drawable.poster6,
-        "poster7.jpg" to R.drawable.poster7,
-        "poster8.jpg" to R.drawable.poster8,
-        "poster9.jpg" to R.drawable.poster9,
-        // Add more mappings as needed for other images
-    )
-
 }

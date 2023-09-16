@@ -7,4 +7,9 @@ plugins {
     //hilt
     id 'com.google.dagger.hilt.android' version "2.42" apply false
 
+    //firebase
+    id 'com.google.gms.google-services' version "4.3.15" apply false
+    //firebase crashlytics
+    id("com.google.firebase.crashlytics") version "2.9.9" apply false
+
 }

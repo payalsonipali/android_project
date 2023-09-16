@@ -1,7 +1,6 @@
 package com.payal.digital_movies.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,7 +48,6 @@ class MovieViewModel @Inject constructor(val context: Context) : ViewModel() {
 
     fun loadJsonFromAssets(pageNo: Int): List<Content> {
         var fileName = "CONTENTLISTINGPAGE-PAGE${pageNo}.json"
-        Log.d("taggg", "filename : $fileName")
         val inputStream = context.assets.open(fileName)
         val size: Int = inputStream.available()
         val buffer = ByteArray(size)
@@ -58,7 +56,6 @@ class MovieViewModel @Inject constructor(val context: Context) : ViewModel() {
         val json = String(buffer, Charsets.UTF_8)
         val gson = Gson()
         val apiResponse = gson.fromJson(json, ApiResponse::class.java)
-        Log.d("taggg", "apiResponse : $apiResponse  \n contentItems : ${apiResponse.page}")
         return apiResponse.page.contentItems.content
     }
 
@@ -84,7 +81,5 @@ class MovieViewModel @Inject constructor(val context: Context) : ViewModel() {
             .map { it.name }
             .distinct()
     }
-
-
 
 }
