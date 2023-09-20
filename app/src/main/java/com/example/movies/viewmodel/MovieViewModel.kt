@@ -1,39 +1,82 @@
 package com.example.movies.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.movies.model.MovieDetail
+import com.example.movies.model.Backdrops
+import com.example.movies.model.Movie
+import com.example.movies.model.MovieExtraDetail
 import com.example.movies.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) : ViewModel() {
+    var selectedItem: String? by mutableStateOf(null)
 
-    private val currentEndpointFlow = MutableStateFlow("now_playing")
+    var isLoading = mutableStateOf(false)
 
-    val currentEndpoint: Flow<String> get() = currentEndpointFlow
+    private val currentEndpointFlow = MutableStateFlow(EndpointWithParameter("now_playing", null))
+
     private val _errorLiveData = MutableLiveData<String>()
-
     val errorLiveData: LiveData<String> get() = _errorLiveData
 
-    val moviePagerFlow: Flow<PagingData<MovieDetail>> = currentEndpointFlow
-        .flatMapLatest { endpoint ->
-            moviewRepository.getMoviePage(endpoint, this)
+    private val _movieExtraDetail = MutableLiveData<MovieExtraDetail?>()
+    val movieExtraDetail: LiveData<MovieExtraDetail?> get() = _movieExtraDetail
+
+    val moviePagerFlow: Flow<PagingData<Movie>> = currentEndpointFlow
+        .flatMapLatest { (endpoint, parameter) ->
+            moviewRepository.getMoviePage(endpoint, this, parameter)
         }
         .cachedIn(viewModelScope)
 
-    fun setEndpoint(endpoint: String) {
-        currentEndpointFlow.value = endpoint
+    fun setEndpoint(endpoint: String, query: String?) {
+        Log.d("taggg", "set end points called : $endpoint : $query")
+        currentEndpointFlow.value = EndpointWithParameter(endpoint, query)
+    }
+
+    suspend fun getBackdrops(id: Long): Backdrops? {
+        return try {
+            val response = moviewRepository.getBackdrops(id)
+            val body = response.body()
+            Log.d("taggg", "response in viewmodel : $body")
+            if (response.isSuccessful) {
+                body
+            } else {
+                // Handle API error here
+                null
+            }
+        } catch (e: Exception) {
+            // Handle network or other exceptions
+            null
+        }
+    }
+
+    suspend fun getMovieDetailById(id: Long): MovieExtraDetail? {
+        return try {
+            val response = moviewRepository.getMovieDetailById(id)
+            val body = response.body()
+            Log.d("taggg", "response in viewmodel : $body")
+            if (response.isSuccessful) {
+                body
+            } else {
+                // Handle API error here
+                null
+            }
+        } catch (e: Exception) {
+            // Handle network or other exceptions
+            null
+        }
     }
 
     fun handleMovieFetchError(errorMessage: String) {
@@ -44,22 +87,6 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
         Log.d("taggg", "error")
         _errorLiveData.postValue("")
     }
-
-    fun getNowPlayingMovies() {
-        Log.d("taggg", "get playing now")
-        setEndpoint("now_playing")
-    }
-
-    fun getPopularMovies() {
-        Log.d("taggg", "get popular")
-        setEndpoint("popular")
-    }
-
-    fun getTopRatedMovies() {
-        setEndpoint("top_rated")
-    }
-
-    fun getUpcomingMovies() {
-        setEndpoint("upcoming")
-    }
 }
+
+data class EndpointWithParameter(val endpoint: String, val parameter: String?)
