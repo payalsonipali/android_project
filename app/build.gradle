@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
     id("kotlin-parcelize")
-
 }
 
 android {
@@ -79,7 +78,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
 
     implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'com.github.bumptech.glide:glide:4.12.0' // Replace with the latest version
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
 
     //lifecycles
     implementation 'androidx.lifecycle:lifecycle-livedata:2.5.1'
@@ -93,7 +92,7 @@ dependencies {
     //room
     //room
     implementation 'androidx.room:room-runtime:2.6.0-alpha01'
-    annotationProcessor 'androidx.room:room-compiler:2.6.0-alpha01'
+    kapt 'androidx.room:room-compiler:2.5.0'
     implementation 'androidx.room:room-ktx:2.6.0-alpha01'
 
     //--Hilt

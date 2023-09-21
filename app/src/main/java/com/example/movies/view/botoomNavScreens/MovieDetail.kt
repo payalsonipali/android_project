@@ -13,6 +13,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +27,15 @@ import coil.compose.rememberImagePainter
 import com.example.movies.Constants.IMAGE_BASE_URL
 import com.example.movies.R
 import com.example.movies.database.FavouriteMoviesDb
+import com.example.movies.entity.Favorite
 import com.example.movies.model.MovieAllDetail
-import com.example.movies.viewmodel.FavouritsViewModel
+import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +47,7 @@ fun MovieDetail(movieAllDetail: MovieAllDetail, navHostController: NavHostContro
         content = {
             Column(
             ) {
-                ImageContainer(movie.poster_path, movie.id, navHostController)
+                ImageContainer(navHostController, movieAllDetail)
                 MovieContent(movieAllDetail = movieAllDetail, isOnDetailScreen = true)
             }
         }
@@ -48,20 +55,24 @@ fun MovieDetail(movieAllDetail: MovieAllDetail, navHostController: NavHostContro
 }
 
 @Composable
-fun ImageContainer(poster_path: String, movieId: Long, navHostController: NavHostController) {
+fun ImageContainer(navHostController: NavHostController, movieAllDetail: MovieAllDetail) {
     val movieViewModel: MovieViewModel = hiltViewModel()
-//    val favouritsViewModel: FavouritsViewModel = hiltViewModel()
+    val favouritsViewModel: FavouritesViewModel = hiltViewModel()
+    val movieDetail = movieAllDetail.movie
+    val geners = movieAllDetail.movieExtraDetail?.genres
+    val coroutineScope = rememberCoroutineScope()
+
 
     Box {
         Image(
-            painter = rememberImagePainter(IMAGE_BASE_URL + poster_path),
+            painter = rememberImagePainter(IMAGE_BASE_URL + movieDetail.poster_path),
             contentDescription = "movie_img",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .clickable {
                     val backdrops = runBlocking {
-                        movieViewModel.getBackdrops(movieId)
+                        movieViewModel.getBackdrops(movieDetail.id)
                     }
 
                     navHostController.currentBackStackEntry?.savedStateHandle?.set(
@@ -91,7 +102,14 @@ fun ImageContainer(poster_path: String, movieId: Long, navHostController: NavHos
                 .align(Alignment.TopEnd)
                 .padding(10.dp)
                 .clickable {
-//                    favouritsViewModel.addToFavourites()
+                    coroutineScope.launch  {
+                        withContext(Dispatchers.IO) {
+//                            movieViewModel.getBackdrops(movieDetail.id)
+                            val favorite = Favorite(movieDetail.id,movieAllDetail.movie,geners,null)
+                            favouritsViewModel.toggleFavoritesIcon(favorite)
+                        }
+                    }
+
                 }
         )
     }

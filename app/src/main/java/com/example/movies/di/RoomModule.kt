@@ -2,7 +2,6 @@ package com.example.movies.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.movies.dao.FavouriteMoviesDao
 import com.example.movies.database.FavouriteMoviesDb
 import dagger.Module
@@ -14,22 +13,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RoomModule {
+object RoomModule {
 
     @Singleton
     @Provides
-    fun provideChannelDao(favouriteMoviesDb: FavouriteMoviesDb): FavouriteMoviesDao {
-        return favouriteMoviesDb.favouriteMoviesDao()
-    }
-
-    @Singleton
-    @Provides
-    fun provideDatabase(@ApplicationContext appContext: Context): RoomDatabase {
+    fun provideDatabase(@ApplicationContext appContext: Context): FavouriteMoviesDb {
         return Room.databaseBuilder(
             appContext,
-            RoomDatabase::class.java,
+            FavouriteMoviesDb::class.java,
             "favourites_db"
         ).build()
     }
 
+    @Singleton
+    @Provides
+    fun provideChannelDao(database: FavouriteMoviesDb): FavouriteMoviesDao {
+        return database.favouriteMoviesDao()
+    }
 }
