@@ -18,14 +18,13 @@ import com.example.movies.model.Backdrop
 import com.example.movies.model.Backdrops
 
 @Composable
-fun BackdropImages(backdrops: Backdrops?) {
-    if (backdrops != null && backdrops.backdrops.isNotEmpty()) {
-        val backdrops = backdrops.backdrops
+fun BackdropImages(backdrops: List<Backdrop>) {
+    if (backdrops != null && backdrops.isNotEmpty()) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
         ) {
             items(backdrops.size) { index ->
-                BackdropItem(backdrop = backdrops.get(index))
+                BackdropItem(backdrops[index])
             }
         }
     }

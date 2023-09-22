@@ -11,10 +11,19 @@ data class Movie(
     var poster_path:String,
     var release_date:String,
     var vote_average:Float,
-):Parcelable
+    val genres: List<Genre>?,
+    val backdrops:List<Backdrop>?
+):Parcelable{
+    fun withUpdatedGenres(newGenres: List<Genre>?): Movie {
+        return copy(genres = newGenres)
+    }
+    fun withBackdrops(backdrops: List<Backdrop>): Movie {
+        return copy(backdrops = backdrops)
+    }
+}
 
 @Parcelize
-data class MovieExtraDetail(
+data class Genres(
     val genres: List<Genre>?
 ):Parcelable
 
@@ -25,9 +34,15 @@ data class Genre(
 ):Parcelable
 
 @Parcelize
+data class MovieWithIsScreenFav(
+    val movie:Movie,
+    val isOnFavouriteScreen: Boolean
+):Parcelable
+
+@Parcelize
 data class MovieAllDetail(
     val movie:Movie,
-    val movieExtraDetail: MovieExtraDetail?
+    val genres: List<Genre>?
 ):Parcelable
 
 @Parcelize

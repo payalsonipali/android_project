@@ -14,8 +14,6 @@ data class Favorite(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val movie: Movie,
-    val genres: List<Genre>?,
-    val backdrops: Backdrops?
 ) {
 }
 

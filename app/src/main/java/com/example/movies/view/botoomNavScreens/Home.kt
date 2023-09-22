@@ -1,7 +1,7 @@
 package com.example.movies.view.botoomNavScreens
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,31 +36,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberImagePainter
-import com.example.movies.Constants.IMAGE_BASE_URL
+import com.example.movies.Constants.items
 import com.example.movies.Constants.mapOfMovieCategory
 import com.example.movies.R
 import com.example.movies.model.Movie
-import com.example.movies.model.MovieAllDetail
 import com.example.movies.ui.theme.green
 import com.example.movies.ui.theme.grey
 import com.example.movies.ui.theme.light_grey
+import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
-import kotlinx.coroutines.runBlocking
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navHostController: NavHostController) {
     val movieViewModel: MovieViewModel = hiltViewModel()
-    val items = listOf("Now Playing", "Popular", "Top Rated", "Upcoming")
     val isLoading = movieViewModel.isLoading.value
     var isSearchVisible by remember { mutableStateOf(false) }
 
@@ -97,7 +95,9 @@ fun HomeScreen(navHostController: NavHostController) {
                     }
 
                     Box(modifier = Modifier.fillMaxSize()) {
-                        RecyclerView(selected, navHostController, movieViewModel)
+                        val movies = movieViewModel.moviePagerFlow.collectAsLazyPagingItems()
+
+                        RecyclerView(selected, navHostController, movies, false)
                         CircularProgressBar(isLoading)
                     }
                 }
@@ -146,7 +146,7 @@ fun HorizontalScrollableRowWithSelection(
         items.forEach { item ->
             item {
                 val isSelected = item == selectedItem
-                Item(
+                HorizontalScrollableRowItem(
                     text = item,
                     isSelected = isSelected,
                     onItemClick = { onItemSelected(item) }
@@ -157,7 +157,7 @@ fun HorizontalScrollableRowWithSelection(
 }
 
 @Composable
-fun Item(
+fun HorizontalScrollableRowItem(
     text: String,
     isSelected: Boolean,
     onItemClick: () -> Unit
@@ -189,16 +189,18 @@ fun Item(
 fun RecyclerView(
     selected: String,
     navHostController: NavHostController,
-    movieViewModel: MovieViewModel
+    movies: LazyPagingItems<Movie>,
+    isOnFavoriteScreen: Boolean
 ) {
+    val favoriteIdViewModel: FavouritesViewModel = hiltViewModel()
 
-    val movies = movieViewModel.moviePagerFlow.collectAsLazyPagingItems()
     val lazyListState = rememberLazyGridState()
 
     // Scroll to item 0 when selected category changes
     LaunchedEffect(selected) {
         lazyListState.scrollToItem(0)
     }
+    val favoriteIds by favoriteIdViewModel.favoriteIds.observeAsState(emptyList())
 
     LazyVerticalGrid(
         state = lazyListState,
@@ -207,58 +209,12 @@ fun RecyclerView(
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         items(movies.itemCount) { index ->
-            movies[index]?.let { ListItem(it, navHostController, movieViewModel) }
+            movies[index]?.let {
+                val isFav = favoriteIds?.contains(movies[index]?.id ?: 0) == true
+                Log.d("taggg","isfav isfav : $isFav")
+                ListItem(it, navHostController, isOnFavoriteScreen, isFav)
+            }
         }
-    }
-}
-
-@Composable
-fun ListItem(movie: Movie, navHostController: NavHostController, movieViewModel: MovieViewModel) {
-    val movieData by movieViewModel.movieExtraDetail.observeAsState()
-
-    Card(
-        shape = RoundedCornerShape(15.dp),
-        modifier = Modifier
-            .height(260.dp)
-            .padding(10.dp)
-            .clickable {
-                val result = runBlocking {
-                    movieViewModel.getMovieDetailById(movie.id)
-                }
-                navHostController.currentBackStackEntry?.savedStateHandle?.set(
-                    "movieDetail",
-                    MovieAllDetail(movie, result)
-                )
-                navHostController.navigate("movie_detail")
-            },
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Red)
-        ) {
-            Image(
-                painter = rememberImagePainter(IMAGE_BASE_URL + movie.poster_path),
-                contentDescription = "movie_img",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                contentScale = ContentScale.Crop
-            )
-            MovieContents(movie, false)
-        }
-    }
-
-}
-
-@Composable
-fun MovieContents(movie: Movie, isOnDetailScreen: Boolean) {
-    Column(
-        modifier = modifier(isOnDetailScreen),
-    ) {
-        RowTitleAndFav(movie.original_title, movie.release_date)
-        RatingBar(movie.vote_average, 10f)
-        MovieOverView(isOnDetailScreen, movie.overview)
     }
 }
 

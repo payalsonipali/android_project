@@ -1,12 +1,16 @@
 package com.example.movies.view.botoomNavScreens
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,30 +25,87 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
+import com.example.movies.Constants
 import com.example.movies.R
 import com.example.movies.model.Genre
 import com.example.movies.model.Movie
-import com.example.movies.model.MovieAllDetail
+import com.example.movies.model.MovieWithIsScreenFav
 import com.example.movies.ui.theme.grey
 import com.example.movies.ui.theme.light_grey
+import com.example.movies.viewmodel.FavouritesViewModel
+import com.example.movies.viewmodel.MovieViewModel
+import kotlinx.coroutines.runBlocking
 
 @Composable
-fun MovieContent(movieAllDetail: MovieAllDetail, isOnDetailScreen:Boolean) {
-    val movie = movieAllDetail.movie
+fun ListItem(movie: Movie, navHostController: NavHostController, isOnFavoriteScreen: Boolean, isFav:Boolean) {
+    val movieViewModel: MovieViewModel = hiltViewModel()
+
+    Card(
+        shape = RoundedCornerShape(15.dp),
+        modifier = Modifier
+            .height(260.dp)
+            .padding(10.dp)
+            .clickable {
+                var updatedMovie = MovieWithIsScreenFav(movie, true)
+                if (!isOnFavoriteScreen) {
+                    Log.d("taggg", "isonfav screen")
+                    val result = runBlocking {
+                        movieViewModel.getMovieDetailById(movie.id)
+                    }
+                    updatedMovie =
+                        MovieWithIsScreenFav(movie.withUpdatedGenres(result?.genres), false)
+                }
+
+                navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                    "movieDetail",
+                    updatedMovie
+                )
+
+                navHostController.navigate("movie_detail")
+            },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Red)
+        ) {
+            Image(
+                painter = rememberImagePainter(Constants.IMAGE_BASE_URL + movie.poster_path),
+                contentDescription = "movie_img",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentScale = ContentScale.Crop
+            )
+            MovieContent(movie, false, isFav)
+        }
+    }
+
+}
+@Composable
+fun MovieContent(movie: Movie, isOnDetailScreen:Boolean, isFav: Boolean) {
     Column(
         modifier = modifier(isOnDetailScreen),
     ) {
-        movieAllDetail.movieExtraDetail?.genres?.let { RowGeners(it) }
-        RowTitleAndFav(movie.original_title, movie.release_date)
+        if(isOnDetailScreen) {movie.genres?.let { RowGeners(it) }}
+        RowTitleAndFav(movie.original_title, movie.release_date, isFav, movie.id)
         RatingBar(movie.vote_average, 10f)
         MovieOverView(isOnDetailScreen, movie.overview)
     }
@@ -97,7 +158,15 @@ fun RowGeners(geners:List<Genre>){
 }
 
 @Composable
-fun RowTitleAndFav(title: String, releaseDate: String) {
+fun RowTitleAndFav(title: String, releaseDate: String, isFav: Boolean, id:Long) {
+    // Observe changes in favoriteIds using observeAsState
+    val favouritesViewModel:FavouritesViewModel = hiltViewModel()
+
+    val favoriteIds by favouritesViewModel.favoriteIds.observeAsState(emptyList())
+
+    // Check if the movie's ID is in the list of favorite IDs
+    val isFavorite = favoriteIds?.contains(id)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,11 +186,13 @@ fun RowTitleAndFav(title: String, releaseDate: String) {
         )
         Spacer(modifier = Modifier.width(10.dp)) // Spacer for icon
 
-        Icon(
-            imageVector = Icons.Default.Favorite,
-            contentDescription = null,
-            tint = Color.LightGray, // Change the icon color as needed
-        )
+        if (isFav) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                tint = Color.LightGray, // Change the icon color as needed
+            )
+        }
     }
 }
 

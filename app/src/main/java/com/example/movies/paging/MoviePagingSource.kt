@@ -12,14 +12,12 @@ import java.lang.Exception
 class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewModel: MovieViewModel, val query:String?) : PagingSource<Int, Movie>(){
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
-        Log.d("taggg", "paging calleddddddd0000000000000000")
 
         try {
 
             viewModel.isLoading.value = true
 
             val position = params.key ?:1
-            Log.d("taggg", "paging called111111111111111111")
 
             val response =
                 if(!query.isNullOrEmpty()){

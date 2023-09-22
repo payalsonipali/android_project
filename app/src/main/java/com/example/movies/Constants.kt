@@ -11,5 +11,8 @@ object Constants {
           "Top Rated" to "top_rated",
           "Upcoming" to "upcoming"
      )
+
+     val items = listOf("Now Playing", "Popular", "Top Rated", "Upcoming")
+
 }
 

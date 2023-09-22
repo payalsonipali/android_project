@@ -28,6 +28,7 @@ import com.example.movies.Constants.IMAGE_BASE_URL
 import com.example.movies.R
 import com.example.movies.database.FavouriteMoviesDb
 import com.example.movies.entity.Favorite
+import com.example.movies.model.Movie
 import com.example.movies.model.MovieAllDetail
 import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
@@ -40,39 +41,41 @@ import kotlinx.coroutines.withContext
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieDetail(movieAllDetail: MovieAllDetail, navHostController: NavHostController) {
-    Log.d("taggg", "Movie detail called $movieAllDetail")
-    val movie = movieAllDetail.movie
+fun MovieDetail(movie: Movie, isInFav:Boolean, navHostController: NavHostController) {
+    Log.d("taggg", "Movie detail called $movie : $isInFav")
     Scaffold(
         content = {
             Column(
             ) {
-                ImageContainer(navHostController, movieAllDetail)
-                MovieContent(movieAllDetail = movieAllDetail, isOnDetailScreen = true)
+                ImageContainer(navHostController, movie, isInFav)
+                MovieContent(movie = movie, isOnDetailScreen = true,false)
             }
         }
     )
 }
 
 @Composable
-fun ImageContainer(navHostController: NavHostController, movieAllDetail: MovieAllDetail) {
+fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: Boolean) {
     val movieViewModel: MovieViewModel = hiltViewModel()
     val favouritsViewModel: FavouritesViewModel = hiltViewModel()
-    val movieDetail = movieAllDetail.movie
-    val geners = movieAllDetail.movieExtraDetail?.genres
     val coroutineScope = rememberCoroutineScope()
 
 
     Box {
         Image(
-            painter = rememberImagePainter(IMAGE_BASE_URL + movieDetail.poster_path),
+            painter = rememberImagePainter(IMAGE_BASE_URL + movie.poster_path),
             contentDescription = "movie_img",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .clickable {
-                    val backdrops = runBlocking {
-                        movieViewModel.getBackdrops(movieDetail.id)
+                    var backdrops = movie.backdrops
+                    if(!isInFav){
+                        backdrops = runBlocking {
+                            movieViewModel.getBackdrops(movie.id)
+                        }?.backdrops
+
+                        Log.d("taggg","backdropdsssss passed : $backdrops")
                     }
 
                     navHostController.currentBackStackEntry?.savedStateHandle?.set(
@@ -104,8 +107,9 @@ fun ImageContainer(navHostController: NavHostController, movieAllDetail: MovieAl
                 .clickable {
                     coroutineScope.launch  {
                         withContext(Dispatchers.IO) {
-//                            movieViewModel.getBackdrops(movieDetail.id)
-                            val favorite = Favorite(movieDetail.id,movieAllDetail.movie,geners,null)
+                            val backdrops = movieViewModel.getBackdrops(movie.id)?.backdrops
+                            val updatedMovie = backdrops?.let { movie.withBackdrops(it) }?:movie
+                            val favorite = Favorite(movie.id,updatedMovie)
                             favouritsViewModel.toggleFavoritesIcon(favorite)
                         }
                     }

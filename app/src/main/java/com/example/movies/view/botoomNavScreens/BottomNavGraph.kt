@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.movies.model.Backdrops
-import com.example.movies.model.MovieAllDetail
+import com.example.movies.model.Backdrop
+import com.example.movies.model.MovieWithIsScreenFav
 
 @Composable
 fun BottomNavGraph(navHostController: NavHostController) {
@@ -17,26 +17,28 @@ fun BottomNavGraph(navHostController: NavHostController) {
             HomeScreen(navHostController)
         }
         composable(route = BottomBarScreens.Favourites.route) {
-            Favourites()
+            Favourites(navHostController)
         }
         composable(route = BottomBarScreens.Profile.route) {
             Profile()
         }
 
         composable(route = Screens.MovieDetailScreen.route) {
-            val movieAllDetail =
-                navHostController.previousBackStackEntry?.savedStateHandle?.get<MovieAllDetail>("movieDetail")
-            movieAllDetail.let {
-                if (movieAllDetail != null) {
-                    MovieDetail(movieAllDetail = movieAllDetail, navHostController = navHostController)
+            val movieWithIsScreenFav =
+                navHostController.previousBackStackEntry?.savedStateHandle?.get<MovieWithIsScreenFav>("movieDetail")
+            movieWithIsScreenFav.let {
+                if (movieWithIsScreenFav != null) {
+                    MovieDetail(movie = movieWithIsScreenFav.movie,isInFav = movieWithIsScreenFav.isOnFavouriteScreen, navHostController = navHostController)
                 }
             }
         }
 
         composable(route = Screens.BackdropImages.route) {
             val backdrops =
-                navHostController.previousBackStackEntry?.savedStateHandle?.get<Backdrops>("backdrops")
-            BackdropImages(backdrops)
+                navHostController.previousBackStackEntry?.savedStateHandle?.get<List<Backdrop>>("backdrops")
+            if (backdrops != null) {
+                BackdropImages(backdrops)
+            }
         }
     }
 

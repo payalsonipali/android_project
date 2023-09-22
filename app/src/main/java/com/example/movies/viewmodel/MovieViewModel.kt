@@ -12,7 +12,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.movies.model.Backdrops
 import com.example.movies.model.Movie
-import com.example.movies.model.MovieExtraDetail
+import com.example.movies.model.Genres
 import com.example.movies.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -31,8 +31,7 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
     private val _errorLiveData = MutableLiveData<String>()
     val errorLiveData: LiveData<String> get() = _errorLiveData
 
-    private val _movieExtraDetail = MutableLiveData<MovieExtraDetail?>()
-    val movieExtraDetail: LiveData<MovieExtraDetail?> get() = _movieExtraDetail
+    private val _genres = MutableLiveData<Genres?>()
 
     val moviePagerFlow: Flow<PagingData<Movie>> = currentEndpointFlow
         .flatMapLatest { (endpoint, parameter) ->
@@ -41,7 +40,6 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
         .cachedIn(viewModelScope)
 
     fun setEndpoint(endpoint: String, query: String?) {
-        Log.d("taggg", "set end points called : $endpoint : $query")
         currentEndpointFlow.value = EndpointWithParameter(endpoint, query)
     }
 
@@ -49,7 +47,6 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
         return try {
             val response = moviewRepository.getBackdrops(id)
             val body = response.body()
-            Log.d("taggg", "response in viewmodel : $body")
             if (response.isSuccessful) {
                 body
             } else {
@@ -62,11 +59,10 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
         }
     }
 
-    suspend fun getMovieDetailById(id: Long): MovieExtraDetail? {
+    suspend fun getMovieDetailById(id: Long): Genres? {
         return try {
             val response = moviewRepository.getMovieDetailById(id)
             val body = response.body()
-            Log.d("taggg", "response in viewmodel : $body")
             if (response.isSuccessful) {
                 body
             } else {
