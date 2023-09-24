@@ -110,7 +110,10 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
                             val backdrops = movieViewModel.getBackdrops(movie.id)?.backdrops
                             val updatedMovie = backdrops?.let { movie.withBackdrops(it) }?:movie
                             val favorite = Favorite(movie.id,updatedMovie)
+                            Log.d("taggg","togle will callllllllll")
                             favouritsViewModel.toggleFavoritesIcon(favorite)
+                            Log.d("taggg","togle will calllllllllledddddddddddddddddddd")
+
                         }
                     }
 

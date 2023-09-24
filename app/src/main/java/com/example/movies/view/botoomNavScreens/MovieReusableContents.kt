@@ -161,7 +161,6 @@ fun RowGeners(geners:List<Genre>){
 fun RowTitleAndFav(title: String, releaseDate: String, isFav: Boolean, id:Long) {
     // Observe changes in favoriteIds using observeAsState
     val favouritesViewModel:FavouritesViewModel = hiltViewModel()
-
     val favoriteIds by favouritesViewModel.favoriteIds.observeAsState(emptyList())
 
     // Check if the movie's ID is in the list of favorite IDs

@@ -17,4 +17,7 @@ sealed class BottomBarScreens(val route:String, val title:String, val icon:Image
 sealed class Screens(val route:String){
     object MovieDetailScreen:Screens(route = "movie_detail")
     object BackdropImages:Screens(route = "backdrops")
+    object SignUp:Screens(route = "registration")
+    object Login:Screens(route = "login")
+
 }

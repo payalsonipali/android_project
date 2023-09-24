@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,19 +21,22 @@ fun Favourites(navHostController:NavHostController) {
     val movies = favouriteViewModel.getAllFavourites().observeAsState().value
 
     if (movies != null) {
-        RecyclerView(movies = movies, navHostController = navHostController)
+        RecyclerViewForFavourite(movies = movies, navHostController = navHostController, favoriteIdViewModel = favouriteViewModel)
     }
 }
 
 @Composable
-fun RecyclerView(movies:List<Movie>, navHostController: NavHostController){
+fun RecyclerViewForFavourite(movies:List<Movie>, navHostController: NavHostController, favoriteIdViewModel:FavouritesViewModel){
+    val favoriteIds by favoriteIdViewModel.favoriteIds.observeAsState(emptyList())
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         items(movies.size) { index ->
-            ListItem(movies[index], navHostController, true, true)
+            val isFav = favoriteIds?.contains(movies[index]?.id ?: 0) == true
+            ListItem(movies[index], navHostController, true, isFav)
         }
     }
 }

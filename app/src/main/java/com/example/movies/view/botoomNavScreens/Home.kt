@@ -190,7 +190,7 @@ fun RecyclerView(
     selected: String,
     navHostController: NavHostController,
     movies: LazyPagingItems<Movie>,
-    isOnFavoriteScreen: Boolean
+    isOnFavoriteScreen: Boolean,
 ) {
     val favoriteIdViewModel: FavouritesViewModel = hiltViewModel()
 

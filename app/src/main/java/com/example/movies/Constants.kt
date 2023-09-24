@@ -14,5 +14,6 @@ object Constants {
 
      val items = listOf("Now Playing", "Popular", "Top Rated", "Upcoming")
 
+     val SERVER_CLIENT_ID = "991389426279-ve4dbj3ve4j6hp3tahn6eo39rbchrbq4.apps.googleusercontent.com"
 }
 

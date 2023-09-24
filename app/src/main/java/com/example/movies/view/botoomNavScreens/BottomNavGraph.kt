@@ -11,8 +11,16 @@ import com.example.movies.model.MovieWithIsScreenFav
 fun BottomNavGraph(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
-        startDestination = BottomBarScreens.Home.route
+        startDestination = Screens.SignUp.route
     ) {
+        composable(route = Screens.SignUp.route) {
+            SignUpScreen(navHostController)
+        }
+
+        composable(route = Screens.Login.route) {
+            LoginScreen(navHostController)
+        }
+
         composable(route = BottomBarScreens.Home.route) {
             HomeScreen(navHostController)
         }

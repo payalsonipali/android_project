@@ -17,6 +17,7 @@ import com.example.movies.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
@@ -32,6 +33,14 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
     val errorLiveData: LiveData<String> get() = _errorLiveData
 
     private val _genres = MutableLiveData<Genres?>()
+
+    private val _refreshFlag = MutableStateFlow(false)
+
+    val refreshFlag = _refreshFlag.asStateFlow()
+
+    fun setRefreshFlag(value: Boolean) {
+        _refreshFlag.value = value
+    }
 
     val moviePagerFlow: Flow<PagingData<Movie>> = currentEndpointFlow
         .flatMapLatest { (endpoint, parameter) ->
