@@ -14,7 +14,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,14 +45,14 @@ import kotlinx.coroutines.withContext
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieDetail(movie: Movie, isInFav:Boolean, navHostController: NavHostController) {
+fun MovieDetail(movie: Movie, isInFav: Boolean, navHostController: NavHostController) {
     Log.d("taggg", "Movie detail called $movie : $isInFav")
     Scaffold(
         content = {
             Column(
             ) {
                 ImageContainer(navHostController, movie, isInFav)
-                MovieContent(movie = movie, isOnDetailScreen = true,false)
+                MovieContent(movie = movie, isOnDetailScreen = true)
             }
         }
     )
@@ -59,6 +63,7 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
     val movieViewModel: MovieViewModel = hiltViewModel()
     val favouritsViewModel: FavouritesViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
+    var isFavorite by remember { mutableStateOf(isInFav) } // Initialize with the initial favorite status
 
 
     Box {
@@ -70,12 +75,12 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
                 .height(200.dp)
                 .clickable {
                     var backdrops = movie.backdrops
-                    if(!isInFav){
+                    if (!isInFav) {
                         backdrops = runBlocking {
                             movieViewModel.getBackdrops(movie.id)
                         }?.backdrops
 
-                        Log.d("taggg","backdropdsssss passed : $backdrops")
+                        Log.d("taggg", "backdropdsssss passed : $backdrops")
                     }
 
                     navHostController.currentBackStackEntry?.savedStateHandle?.set(
@@ -95,25 +100,26 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(10.dp)
+                .clickable {
+                    navHostController.popBackStack()
+                }
         )
 
         Icon(
-            painterResource(id = R.drawable.baseline_favorite_24),
+            painterResource(id = if (isFavorite) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24),
             contentDescription = null,
             tint = Color.White,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(10.dp)
                 .clickable {
-                    coroutineScope.launch  {
+                    coroutineScope.launch {
                         withContext(Dispatchers.IO) {
                             val backdrops = movieViewModel.getBackdrops(movie.id)?.backdrops
-                            val updatedMovie = backdrops?.let { movie.withBackdrops(it) }?:movie
-                            val favorite = Favorite(movie.id,updatedMovie)
-                            Log.d("taggg","togle will callllllllll")
+                            val updatedMovie = backdrops?.let { movie.withBackdrops(it) } ?: movie
+                            val favorite = Favorite(movie.id, updatedMovie)
                             favouritsViewModel.toggleFavoritesIcon(favorite)
-                            Log.d("taggg","togle will calllllllllledddddddddddddddddddd")
-
+                            isFavorite = !isFavorite
                         }
                     }
 

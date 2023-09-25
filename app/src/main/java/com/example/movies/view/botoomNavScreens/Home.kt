@@ -2,6 +2,7 @@ package com.example.movies.view.botoomNavScreens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,7 @@ import com.example.movies.ui.theme.grey
 import com.example.movies.ui.theme.light_grey
 import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -185,6 +188,7 @@ fun HorizontalScrollableRowItem(
 }
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecyclerView(
     selected: String,
@@ -200,7 +204,12 @@ fun RecyclerView(
     LaunchedEffect(selected) {
         lazyListState.scrollToItem(0)
     }
-    val favoriteIds by favoriteIdViewModel.favoriteIds.observeAsState(emptyList())
+    val favoriteIds by favoriteIdViewModel.favoriteIdsFlow.collectAsState(emptyList())
+
+    LaunchedEffect(key1 = favoriteIds) {
+        Log.d("taggg","favids refreshed : $favoriteIds")
+            movies.refresh()
+    }
 
     LazyVerticalGrid(
         state = lazyListState,
@@ -212,7 +221,7 @@ fun RecyclerView(
             movies[index]?.let {
                 val isFav = favoriteIds?.contains(movies[index]?.id ?: 0) == true
                 Log.d("taggg","isfav isfav : $isFav")
-                ListItem(it, navHostController, isOnFavoriteScreen, isFav)
+                ListItem(it, navHostController, isOnFavoriteScreen)
             }
         }
     }

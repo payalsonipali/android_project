@@ -2,6 +2,7 @@ package com.example.movies.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movies.model.SignUpState
 import com.example.movies.repository.AuthRepository
 import com.example.movies.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,9 +36,3 @@ class SignUpViewModel @Inject constructor(val authRepository: AuthRepository): V
 
     }
 }
-
-data class SignUpState(
-    val isLoading: Boolean = false,
-    val isSuccess: String? = "",
-    val isError: String? = ""
-)

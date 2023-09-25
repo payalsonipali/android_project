@@ -25,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,7 @@ import com.example.movies.viewmodel.MovieViewModel
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun ListItem(movie: Movie, navHostController: NavHostController, isOnFavoriteScreen: Boolean, isFav:Boolean) {
+fun ListItem(movie: Movie, navHostController: NavHostController, isOnFavoriteScreen: Boolean) {
     val movieViewModel: MovieViewModel = hiltViewModel()
 
     Card(
@@ -94,18 +95,18 @@ fun ListItem(movie: Movie, navHostController: NavHostController, isOnFavoriteScr
                     .weight(1f),
                 contentScale = ContentScale.Crop
             )
-            MovieContent(movie, false, isFav)
+            MovieContent(movie, false)
         }
     }
 
 }
 @Composable
-fun MovieContent(movie: Movie, isOnDetailScreen:Boolean, isFav: Boolean) {
+fun MovieContent(movie: Movie, isOnDetailScreen:Boolean) {
     Column(
         modifier = modifier(isOnDetailScreen),
     ) {
         if(isOnDetailScreen) {movie.genres?.let { RowGeners(it) }}
-        RowTitleAndFav(movie.original_title, movie.release_date, isFav, movie.id)
+        RowTitleAndFav(movie.original_title, movie.release_date, movie.id)
         RatingBar(movie.vote_average, 10f)
         MovieOverView(isOnDetailScreen, movie.overview)
     }
@@ -158,13 +159,11 @@ fun RowGeners(geners:List<Genre>){
 }
 
 @Composable
-fun RowTitleAndFav(title: String, releaseDate: String, isFav: Boolean, id:Long) {
+fun RowTitleAndFav(title: String, releaseDate: String, id:Long) {
     // Observe changes in favoriteIds using observeAsState
     val favouritesViewModel:FavouritesViewModel = hiltViewModel()
-    val favoriteIds by favouritesViewModel.favoriteIds.observeAsState(emptyList())
-
-    // Check if the movie's ID is in the list of favorite IDs
-    val isFavorite = favoriteIds?.contains(id)
+    val favoriteIds by favouritesViewModel.favoriteIdsFlow.collectAsState(emptyList())
+    val isFavorite = favoriteIds.contains(id)
 
     Row(
         modifier = Modifier
@@ -185,7 +184,7 @@ fun RowTitleAndFav(title: String, releaseDate: String, isFav: Boolean, id:Long) 
         )
         Spacer(modifier = Modifier.width(10.dp)) // Spacer for icon
 
-        if (isFav) {
+        if (isFavorite==true) {
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = null,

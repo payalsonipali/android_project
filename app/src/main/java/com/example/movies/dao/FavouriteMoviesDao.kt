@@ -7,6 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.movies.entity.Favorite
 import com.example.movies.model.Movie
+import com.example.movies.model.UserProfile
+import com.example.movies.utils.Resource
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavouriteMoviesDao {
@@ -27,6 +30,6 @@ interface FavouriteMoviesDao {
     fun getMovieById(movieId: Long):Favorite?
 
     @Query("SELECT id FROM favorite_movies")
-    suspend fun getFavouriteMoviesId():List<Long>?
+    fun getFavouriteMoviesId(): Flow<List<Long>>
 
 }

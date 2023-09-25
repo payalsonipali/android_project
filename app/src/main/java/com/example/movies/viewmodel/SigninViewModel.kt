@@ -4,6 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movies.model.GoogleSignInState
+import com.example.movies.model.SignInState
 import com.example.movies.repository.AuthRepository
 import com.example.movies.utils.Resource
 import com.google.firebase.auth.AuthCredential
@@ -61,15 +63,3 @@ class SigninViewModel @Inject constructor(val authRepository: AuthRepository) : 
 
     }
 }
-
-data class SignInState(
-    val isLoading: Boolean = false,
-    val isSuccess: String? = "",
-    val isError: String? = ""
-)
-
-data class GoogleSignInState(
-    val loading: Boolean = false,
-    val success: AuthResult? = null,
-    val error: String = ""
-)

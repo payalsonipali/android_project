@@ -5,7 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movies.model.UserProfile
+import com.example.movies.model.ProfileState
+import com.example.movies.model.UpdateProfileState
 import com.example.movies.repository.AuthRepository
 import com.example.movies.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,15 +58,3 @@ class ProfileViewModel @Inject constructor(val authRepository: AuthRepository) :
         }
     }
 }
-
-data class ProfileState(
-    val isLoading: Boolean = false,
-    val success: UserProfile? = null,
-    val error: String = ""
-)
-
-data class UpdateProfileState(
-    val isLoading: Boolean = false,
-    val success: Unit? = null,
-    val error: String = ""
-)
