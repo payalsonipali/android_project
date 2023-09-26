@@ -1,17 +1,22 @@
 package com.example.movies.view.botoomNavScreens
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.movies.model.Backdrop
 import com.example.movies.model.MovieWithIsScreenFav
+import com.example.movies.model.Trailer
+import com.example.movies.viewmodel.SigninViewModel
 
 @Composable
 fun BottomNavGraph(navHostController: NavHostController) {
+    val authViewModel:SigninViewModel = hiltViewModel()
+
     NavHost(
         navController = navHostController,
-        startDestination = Screens.SignUp.route
+        startDestination = if(authViewModel.isUserLoggedIn())BottomBarScreens.Home.route else Screens.Login.route
     ) {
         composable(route = Screens.SignUp.route) {
             SignUpScreen(navHostController)
@@ -28,15 +33,21 @@ fun BottomNavGraph(navHostController: NavHostController) {
             Favourites(navHostController)
         }
         composable(route = BottomBarScreens.Profile.route) {
-            Profile()
+            Profile(navHostController)
         }
 
         composable(route = Screens.MovieDetailScreen.route) {
             val movieWithIsScreenFav =
-                navHostController.previousBackStackEntry?.savedStateHandle?.get<MovieWithIsScreenFav>("movieDetail")
+                navHostController.previousBackStackEntry?.savedStateHandle?.get<MovieWithIsScreenFav>(
+                    "movieDetail"
+                )
             movieWithIsScreenFav.let {
                 if (movieWithIsScreenFav != null) {
-                    MovieDetail(movie = movieWithIsScreenFav.movie,isInFav = movieWithIsScreenFav.isOnFavouriteScreen, navHostController = navHostController)
+                    MovieDetail(
+                        movie = movieWithIsScreenFav.movie,
+                        isInFav = movieWithIsScreenFav.isOnFavouriteScreen,
+                        navHostController = navHostController
+                    )
                 }
             }
         }
@@ -48,6 +59,16 @@ fun BottomNavGraph(navHostController: NavHostController) {
                 BackdropImages(backdrops)
             }
         }
+
+        composable(route = Screens.Trailer.route) {
+            val trailer =
+                navHostController.previousBackStackEntry?.savedStateHandle?.get<String>("trailer")
+            if (trailer != null) {
+                TrailerScreen(youtubeVideoId = trailer)
+            }
+
+        }
+
     }
 
 }

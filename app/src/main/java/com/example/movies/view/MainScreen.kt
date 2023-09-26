@@ -45,13 +45,21 @@ fun BottomBar(navHostController: NavHostController) {
 
     //whenever value change it will notify
     val navBackStack by navHostController.currentBackStackEntryAsState()
-    val curreDestination = navBackStack?.destination
+    val currentDestination = navBackStack?.destination
 
-    BottomNavigation(
-        backgroundColor = grey
-    ) {
-        screens.forEach { screen ->
-            AddItems(screen = screen, currenDestination = curreDestination, navHostController = navHostController)
+    val isBottomBarVisible = currentDestination?.route in screens.map { it.route }
+
+    if(isBottomBarVisible) {
+        BottomNavigation(
+            backgroundColor = grey
+        ) {
+            screens.forEach { screen ->
+                AddItems(
+                    screen = screen,
+                    currenDestination = currentDestination,
+                    navHostController = navHostController
+                )
+            }
         }
     }
 }

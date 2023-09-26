@@ -68,6 +68,24 @@ class MovieViewModel @Inject constructor(val moviewRepository: MovieRepository) 
         }
     }
 
+    suspend fun getTrailer(movieId:Long): String? {
+        try {
+            val response = moviewRepository.getTrailer(movieId)
+            val body = response.body()
+            Log.d("taggg","body : $body")
+            if(response.isSuccessful && body != null){
+                val firstTrailer = body.results.find { it.type == "Trailer" }
+                if (firstTrailer != null) {
+                    Log.d("taggg","key : ${firstTrailer.key}")
+                    return firstTrailer.key
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     suspend fun getMovieDetailById(id: Long): Genres? {
         return try {
             val response = moviewRepository.getMovieDetailById(id)

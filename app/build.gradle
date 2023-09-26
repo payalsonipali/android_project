@@ -120,6 +120,10 @@ dependencies {
 
     //google auth
     implementation "com.google.android.gms:play-services-auth:20.7.0"
+
+    //youtube player
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:11.0.1'
+
 }
 
 kapt {

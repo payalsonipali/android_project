@@ -1,6 +1,7 @@
 package com.example.movies.model
 
 import android.os.Parcelable
+import com.google.android.material.shape.ShapePath.PathArcOperation
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -53,4 +54,15 @@ data class Backdrops(
 @Parcelize
 data class Backdrop(
     val file_path: String,
+):Parcelable
+
+@Parcelize
+data class Trailer(
+    val results: List<TrailerVideo>,
+):Parcelable
+
+@Parcelize
+data class TrailerVideo(
+    val type:String,
+    val key:String
 ):Parcelable

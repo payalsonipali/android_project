@@ -69,14 +69,7 @@ fun LoginScreen(
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-            val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            try{
-                val result = account.getResult(ApiException::class.java)
-                val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
-                signinViewModel.googleSignIn(credentials)
-            } catch (e:ApiException){
-                Log.d("taggg","Something went wrong $e")
-            }
+            signinViewModel.callLauncher(it.data)
         }
 
     Column(
@@ -215,18 +208,6 @@ fun LoginScreen(
                 Icon(
                     painterResource(id = R.drawable.google),
                     contentDescription = "Google_icon",
-                    modifier = Modifier.size(50.dp),
-                    tint = Color.Unspecified
-                )
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            IconButton(
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook_icon",
                     modifier = Modifier.size(50.dp),
                     tint = Color.Unspecified
                 )

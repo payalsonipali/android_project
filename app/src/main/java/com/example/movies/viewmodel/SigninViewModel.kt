@@ -1,5 +1,8 @@
 package com.example.movies.viewmodel
 
+import android.content.Intent
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,8 +11,13 @@ import com.example.movies.model.GoogleSignInState
 import com.example.movies.model.SignInState
 import com.example.movies.repository.AuthRepository
 import com.example.movies.utils.Resource
+import com.example.movies.view.botoomNavScreens.BottomBarScreens
+import com.example.movies.view.botoomNavScreens.Screens
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -18,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SigninViewModel @Inject constructor(val authRepository: AuthRepository) : ViewModel() {
+class SigninViewModel @Inject constructor(val authRepository: AuthRepository, val sharedPreferences:SharedPreferences) : ViewModel() {
 
     val _signInState = Channel<SignInState>()
     val signInState = _signInState.receiveAsFlow()
@@ -62,4 +70,20 @@ class SigninViewModel @Inject constructor(val authRepository: AuthRepository) : 
         }
 
     }
+
+    fun callLauncher(data: Intent?){
+        val account = GoogleSignIn.getSignedInAccountFromIntent(data)
+        try{
+            val result = account.getResult(ApiException::class.java)
+            val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
+            googleSignIn(credentials)
+        } catch (e: ApiException){
+            Log.d("taggg","Something went wrong $e")
+        }
+    }
+
+    fun isUserLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
+
 }

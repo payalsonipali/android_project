@@ -3,12 +3,19 @@ package com.example.movies.view.botoomNavScreens
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -34,6 +41,7 @@ import com.example.movies.database.FavouriteMoviesDb
 import com.example.movies.entity.Favorite
 import com.example.movies.model.Movie
 import com.example.movies.model.MovieAllDetail
+import com.example.movies.ui.theme.grey
 import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,19 +51,20 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetail(movie: Movie, isInFav: Boolean, navHostController: NavHostController) {
     Log.d("taggg", "Movie detail called $movie : $isInFav")
-    Scaffold(
-        content = {
-            Column(
-            ) {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().background(grey)
+        ) {
+            item {
                 ImageContainer(navHostController, movie, isInFav)
+            }
+            item {
                 MovieContent(movie = movie, isOnDetailScreen = true)
             }
         }
-    )
 }
 
 @Composable
@@ -64,7 +73,6 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
     val favouritsViewModel: FavouritesViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
     var isFavorite by remember { mutableStateOf(isInFav) } // Initialize with the initial favorite status
-
 
     Box {
         Image(
@@ -106,12 +114,32 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
         )
 
         Icon(
-            painterResource(id = if (isFavorite) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24),
+            painterResource(id = R.drawable.youtube),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .size(50.dp)
+                .padding(end = 10.dp)
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    coroutineScope.launch {
+                        val trailer = movieViewModel.getTrailer(movie.id)
+                        navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                            "trailer",
+                            trailer
+                        )
+                        navHostController.navigate("trailer")
+                    }
+                }
+        )
+
+        Icon(
+            painterResource(id = if (!isFavorite) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24),
             contentDescription = null,
             tint = Color.White,
             modifier = Modifier
-                .align(Alignment.TopEnd)
                 .padding(10.dp)
+                .align(Alignment.TopEnd)
                 .clickable {
                     coroutineScope.launch {
                         withContext(Dispatchers.IO) {
@@ -125,5 +153,6 @@ fun ImageContainer(navHostController: NavHostController, movie: Movie, isInFav: 
 
                 }
         )
+
     }
 }

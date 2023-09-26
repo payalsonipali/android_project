@@ -19,5 +19,6 @@ sealed class Screens(val route:String){
     object BackdropImages:Screens(route = "backdrops")
     object SignUp:Screens(route = "registration")
     object Login:Screens(route = "login")
+    object Trailer:Screens(route = "trailer")
 
 }

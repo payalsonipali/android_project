@@ -192,23 +192,11 @@ fun SignUpScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.width(10.dp))
-
-            IconButton(
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook_icon",
-                    modifier = Modifier.size(50.dp),
-                    tint = Color.Unspecified
-                )
-            }
-            
             LaunchedEffect(key1 = state.value?.isSuccess){
                 scope.launch {
                     if(state.value?.isSuccess?.isNotEmpty() == true){
                         val success = state.value?.isSuccess
-                        navHostController.navigate("home")
+                        navHostController.navigate("login")
                         Toast.makeText(context,"${success}",Toast.LENGTH_LONG).show()
                     }
                 }

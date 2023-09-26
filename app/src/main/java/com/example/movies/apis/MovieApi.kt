@@ -3,6 +3,7 @@ package com.example.movies.apis
 import com.example.movies.model.Backdrops
 import com.example.movies.model.Genres
 import com.example.movies.model.MoviesResult
+import com.example.movies.model.Trailer
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -38,4 +39,8 @@ interface MovieApi {
     @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMDg5OWM5ZmMyNDVhYTJiOTY0MTExYjEyN2Y3NDljNSIsInN1YiI6IjY0ZWI2ZmU5MWZlYWMxMDExYjJlNWU0YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.EJxvTefdqA75fzV-LMYfzTw2ZwzZ11okZlzsf_a6Ics")
     @GET("movie/{movieId}/images")
     suspend fun getBackdropsByMovieId(@Path("movieId") movieId: Long): Response<Backdrops?>
+
+    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMDg5OWM5ZmMyNDVhYTJiOTY0MTExYjEyN2Y3NDljNSIsInN1YiI6IjY0ZWI2ZmU5MWZlYWMxMDExYjJlNWU0YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.EJxvTefdqA75fzV-LMYfzTw2ZwzZ11okZlzsf_a6Ics")
+    @GET("movie/{movieId}/videos")
+    suspend fun getMovieTrailerById(@Path("movieId") movieId: Long): Response<Trailer?>
 }

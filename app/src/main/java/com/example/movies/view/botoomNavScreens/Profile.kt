@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.Button
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.movies.model.UserProfile
 import com.example.movies.ui.theme.light_grey
@@ -52,7 +54,7 @@ import com.example.movies.ui.theme.grey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile() {
+fun Profile(navHostController: NavHostController) {
     var isEditMode by remember { mutableStateOf(false) }
     var name by rememberSaveable { mutableStateOf("") }
     val profileViewModel: ProfileViewModel = hiltViewModel()
@@ -130,11 +132,28 @@ fun Profile() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                contentAlignment = Alignment.TopEnd
             ) {
                 IconButton(
+                    onClick = {
+                        Toast.makeText(context,"Logged out successfully",Toast.LENGTH_LONG).show()
+                        profileViewModel.logout(navHostController)
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .align(Alignment.TopStart)
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.baseline_logout_24),
+                        tint = light_grey,
+                        contentDescription = "Edit",
+                    )
+                }
+
+                IconButton(
                     onClick = { isEditMode = !isEditMode },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .align(Alignment.TopEnd)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -145,6 +164,8 @@ fun Profile() {
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Box(
             modifier = Modifier
                 .size(150.dp)
@@ -154,10 +175,13 @@ fun Profile() {
                 painter = if (imageUri == null) rememberImagePainter(data = userInfo?.avatarUrl)
                 else rememberImagePainter(data = imageUri),
                 contentDescription = "User Image",
-                modifier = Modifier.fillMaxSize().size(150.dp).clip(CircleShape),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .size(150.dp)
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop,
 
-            )
+                )
             if (isEditMode) {
                 Icon(
                     painterResource(id = R.drawable.baseline_camera_alt_24),
@@ -242,7 +266,7 @@ fun Profile() {
 }
 
 @Composable
-fun RowContent(title: String, name: String){
+fun RowContent(title: String, name: String) {
     Row {
         CommonText(name = title)
         CommonText(name)
@@ -250,10 +274,10 @@ fun RowContent(title: String, name: String){
 }
 
 @Composable
-fun CommonText(name:String){
+fun CommonText(name: String) {
     Text(
         text = name,
-        fontSize = 20.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         color = Color.White
     )

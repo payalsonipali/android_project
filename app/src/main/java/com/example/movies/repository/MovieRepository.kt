@@ -23,4 +23,6 @@ class MovieRepository @Inject constructor(val movieApi: MovieApi) {
         return result
     }
 
+    suspend fun getTrailer(movieId:Long) = movieApi.getMovieTrailerById(movieId)
+
 }

@@ -13,8 +13,4 @@ interface AuthRepository{
     fun registerUser(email:String, password:String): Flow<Resource<AuthResult>>
 
     fun googleSignIn(authCredential:AuthCredential) : Flow<Resource<AuthResult>>
-
-    fun userProfile() : Flow<Resource<UserProfile>>
-
-    fun updateUserProfile(name: String, imageUri: Uri?) : Flow<Resource<Unit>>
 }
