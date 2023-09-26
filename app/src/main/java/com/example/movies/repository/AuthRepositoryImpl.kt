@@ -27,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid
             if (uid != null) {
-                editDataToSharedPreference(uid)
+                addDataToSharedPreference(uid)
             }
             emit(Resource.Success(result))
         }.catch {
@@ -67,7 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
                     val userProfile = UserProfile("", avatar, email)
                     userDocument.set(userProfile).await()
                 }
-                editDataToSharedPreference(uid)
+                addDataToSharedPreference(uid)
             }
             emit(Resource.Success(result))
         }.catch {
@@ -80,7 +80,7 @@ class AuthRepositoryImpl @Inject constructor(
         return defaultAvatarReference.downloadUrl.await().toString()
     }
 
-    private fun editDataToSharedPreference(uid: String) {
+    private fun addDataToSharedPreference(uid: String) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", true)
         editor.putString("uid", uid)

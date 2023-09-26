@@ -23,7 +23,7 @@ class SignUpViewModel @Inject constructor(val authRepository: AuthRepository): V
                 result ->
             when(result){
                 is Resource.Success -> {
-                    _signUpState.send(SignUpState(isSuccess = "Login successfully"))
+                    _signUpState.send(SignUpState(isSuccess = "Account created successfully"))
                 }
                 is Resource.Error -> {
                     _signUpState.send(SignUpState(isError = result.message))

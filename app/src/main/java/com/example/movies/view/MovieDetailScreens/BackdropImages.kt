@@ -1,4 +1,4 @@
-package com.example.movies.view.botoomNavScreens
+package com.example.movies.view.MovieDetailScreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.example.movies.Constants
 import com.example.movies.model.Backdrop
-import com.example.movies.model.Backdrops
 
 @Composable
 fun BackdropImages(backdrops: List<Backdrop>) {

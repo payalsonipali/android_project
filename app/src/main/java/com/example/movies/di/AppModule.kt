@@ -3,11 +3,11 @@ package com.example.movies.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.movies.Constants.BASE_URL
+import com.example.movies.Constants.TOKEN
 import com.example.movies.apis.MovieApi
-import com.example.movies.repository.AuthRepository
-import com.example.movies.repository.AuthRepositoryImpl
-import com.example.movies.repository.ProfileRepository
-import com.example.movies.repository.ProfileRepositoryImpl
+import com.example.movies.dao.FavouriteMoviesDao
+import com.example.movies.repository.*
+import com.example.movies.utils.AuthInterceptor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -16,6 +16,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -24,10 +25,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(TOKEN))
+            .build()
+    }
+
     @Singleton
     @Provides
-    fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
+    fun getRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder().baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
     }
 
     @Singleton
@@ -64,5 +75,17 @@ class AppModule {
     @Provides
     fun provieProfileRepositoryImpl(firebaseFirestore: FirebaseFirestore, sharedPreferences: SharedPreferences): ProfileRepository{
         return ProfileRepositoryImpl(firebaseFirestore, sharedPreferences)
+    }
+
+    @Singleton
+    @Provides
+    fun provieMovieRepositoryImpl(moviApi:MovieApi): MovieRepository{
+        return MovieRepositoryImpl(moviApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provieFavRepositoryImpl(favouriteMoviesDao: FavouriteMoviesDao, sharedPreferences: SharedPreferences): FavouriteRepository{
+        return FavouriteRepositoryImpl(favouriteMoviesDao, sharedPreferences)
     }
 }

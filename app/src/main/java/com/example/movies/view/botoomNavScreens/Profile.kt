@@ -10,16 +10,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.Button
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,11 +43,13 @@ import com.example.movies.ui.theme.light_grey
 import com.example.movies.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
 import com.example.movies.R
-import com.example.movies.ui.theme.grey
+import com.example.movies.view.AuthScreens.CommonButton
+import com.example.movies.view.AuthScreens.TextFiledColors
+import com.example.movies.view.Common.CircularProgressBarWidget
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(navHostController: NavHostController) {
+
     var isEditMode by remember { mutableStateOf(false) }
     var name by rememberSaveable { mutableStateOf("") }
     val profileViewModel: ProfileViewModel = hiltViewModel()
@@ -62,18 +57,15 @@ fun Profile(navHostController: NavHostController) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var userInfo by remember { mutableStateOf<UserProfile>(UserProfile()) }
 
-
     val profileState = profileViewModel.profileState.value
     val updateProfileState = profileViewModel.updatedProfileState.value
     val context = LocalContext.current
-
 
     // Camera capture launcher
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            // Image selected, store the URI
             imageUri = it
         }
     }
@@ -135,7 +127,7 @@ fun Profile(navHostController: NavHostController) {
             ) {
                 IconButton(
                     onClick = {
-                        Toast.makeText(context,"Logged out successfully",Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Logged out successfully", Toast.LENGTH_LONG).show()
                         profileViewModel.logout(navHostController)
                     },
                     modifier = Modifier
@@ -145,7 +137,7 @@ fun Profile(navHostController: NavHostController) {
                     Icon(
                         painterResource(id = R.drawable.baseline_logout_24),
                         tint = light_grey,
-                        contentDescription = "Edit",
+                        contentDescription = "Logout",
                     )
                 }
 
@@ -164,13 +156,9 @@ fun Profile(navHostController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-
-        ) {
+        Box(modifier = Modifier.size(150.dp)) {
             Image(
                 painter = if (imageUri == null) rememberImagePainter(data = userInfo?.avatarUrl)
                 else rememberImagePainter(data = imageUri),
@@ -183,8 +171,7 @@ fun Profile(navHostController: NavHostController) {
 
                 )
             if (isEditMode) {
-                Icon(
-                    painterResource(id = R.drawable.baseline_camera_alt_24),
+                Icon(painterResource(id = R.drawable.baseline_camera_alt_24),
                     tint = light_grey,
                     contentDescription = "Icon",
                     modifier = Modifier
@@ -196,12 +183,11 @@ fun Profile(navHostController: NavHostController) {
                         .size(32.dp)
                         .clickable {
                             pickImageLauncher.launch("image/*")
-                        }
-                )
+                        })
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         if (isEditMode) {
             TextField(
@@ -213,53 +199,24 @@ fun Profile(navHostController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.White,
-                    backgroundColor = light_grey,
-                    textColor = Color.Black,
-                    placeholderColor = grey
-                )
+                colors = TextFiledColors()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CommonButton(text = "Save", onClick = {
+                scope.launch {
+                    profileViewModel.updateUserProfile(name, imageUri)
+                }
+            })
 
         } else {
             RowContent(title = "Username : ", userInfo.name)
             RowContent(title = "Email : ", userInfo.email)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (isEditMode) {
-            Button(
-                onClick = {
-                    scope.launch {
-                        profileViewModel.updateUserProfile(name, imageUri)
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, start = 30.dp, end = 30.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = light_grey,
-                    contentColor = Color.Black,
-                ),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Text(
-                    text = "Save",
-                    color = Color.Black,
-                    modifier = Modifier.padding(7.dp)
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            if (profileState.isLoading || updateProfileState.isLoading) {
-                CircularProgressIndicator()
-            }
-
+        if (profileState.isLoading || updateProfileState.isLoading) {
+            CircularProgressBarWidget()
         }
 
     }
@@ -276,9 +233,6 @@ fun RowContent(title: String, name: String) {
 @Composable
 fun CommonText(name: String) {
     Text(
-        text = name,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.White
+        text = name, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White
     )
 }

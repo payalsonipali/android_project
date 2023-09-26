@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.movies.model.Movie
+import com.example.movies.view.MovieDetailScreens.ListItem
 import com.example.movies.viewmodel.FavouritesViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")

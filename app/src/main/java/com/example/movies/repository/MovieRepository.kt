@@ -1,28 +1,20 @@
 package com.example.movies.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import com.example.movies.apis.MovieApi
-import com.example.movies.model.Backdrops
+import androidx.paging.PagingData
+import com.example.movies.model.Backdrop
 import com.example.movies.model.Genres
-import com.example.movies.paging.MoviePagingSource
+import com.example.movies.model.Movie
+import com.example.movies.utils.Resource
 import com.example.movies.viewmodel.MovieViewModel
-import retrofit2.Response
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-class MovieRepository @Inject constructor(val movieApi: MovieApi) {
+interface MovieRepository{
 
-    fun getMoviePage(endPoint:String, viewModel: MovieViewModel, query:String?) = Pager(
-        config = PagingConfig(20, 50), //PagingConfig(data_per_page, cached_50_objects)
-        pagingSourceFactory = {MoviePagingSource(movieApi, endPoint, viewModel, query)}
-    ).flow
+    fun getMoviePage(endPoint:String, viewModel: MovieViewModel, query:String?) : Flow<PagingData<Movie>>
 
-    suspend fun getMovieDetailById(id:Long): Response<Genres?> = movieApi.getMovieDetailById(id)
-    suspend fun getBackdrops(id:Long): Response<Backdrops?> {
-        val result = movieApi.getBackdropsByMovieId(id)
-        return result
-    }
+    suspend fun getMovieDetailById(id:Long): Resource<Genres?>
 
-    suspend fun getTrailer(movieId:Long) = movieApi.getMovieTrailerById(movieId)
+    suspend fun getBackdrops(id:Long): Resource<List<Backdrop>>
 
+    suspend fun getTrailer(movieId:Long): Resource<String?>
 }

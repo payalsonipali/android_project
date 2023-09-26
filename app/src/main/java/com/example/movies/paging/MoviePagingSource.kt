@@ -1,6 +1,5 @@
 package com.example.movies.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.movies.model.Movie
@@ -10,7 +9,6 @@ import java.lang.Exception
 
 //PagingSource<page_type, api_response_type>
 class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewModel: MovieViewModel, val query:String?) : PagingSource<Int, Movie>(){
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
 
         try {
@@ -21,7 +19,6 @@ class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewMod
 
             val response =
                 if(!query.isNullOrEmpty()){
-                    Log.d("taggg", "paging query not null")
                     movieApi.getMoviesByName(query, position)
                 } else{
                     when (endPoint) {
@@ -35,11 +32,8 @@ class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewMod
 
             if (response != null) {
                 return if (response.isSuccessful) {
-                    Log.d("taggg","endpoint : ${endPoint}   response : $response")
                     val moviesResult = response?.body()
-                    Log.d("taggg","movieResult  : $moviesResult")
                     val movies = moviesResult?.results ?: emptyList()
-                    Log.d("taggg","movies : $movies")
 
                     viewModel.isLoading.value = false
 
@@ -49,7 +43,6 @@ class MoviePagingSource(val movieApi: MovieApi, val endPoint:String, val viewMod
                         nextKey = if (position == moviesResult?.total_pages) null else position + 1
                     )
                 } else {
-                    // Handle API error here
                     viewModel.handleMovieFetchError( "Failed to fetch movies, please try again")
                     LoadResult.Error(Exception("Failed to fetch movies, please try again"))
                 }

@@ -1,21 +1,13 @@
 package com.example.movies.view.botoomNavScreens
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,17 +20,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -59,9 +41,11 @@ import com.example.movies.model.Movie
 import com.example.movies.ui.theme.green
 import com.example.movies.ui.theme.grey
 import com.example.movies.ui.theme.light_grey
+import com.example.movies.view.Common.CircularProgressBar
+import com.example.movies.view.MovieDetailScreens.ListItem
+import com.example.movies.view.MovieDetailScreens.SearchMovieScreen
 import com.example.movies.viewmodel.FavouritesViewModel
 import com.example.movies.viewmodel.MovieViewModel
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,32 +54,19 @@ fun HomeScreen(navHostController: NavHostController) {
     val movieViewModel: MovieViewModel = hiltViewModel()
     val isLoading = movieViewModel.isLoading.value
     var isSearchVisible by remember { mutableStateOf(false) }
+    val errorMessage by movieViewModel.errorLiveData.observeAsState()
+    val context = LocalContext.current
+
+    errorMessage?.let { message ->
+        if(!message.isEmpty() && !message.isBlank()) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+        movieViewModel.clearError()
+    }
 
     if (movieViewModel.selectedItem == null && items.isNotEmpty()) {
         movieViewModel.selectedItem = items[0]
     }
-
-    val context = LocalContext.current
-
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val scope = rememberCoroutineScope()
-
-    DisposableEffect(backDispatcher) {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isSearchVisible) {
-                    isSearchVisible = !isSearchVisible
-                } else {
-                    val activity = context as? AppCompatActivity
-                    activity?.finish()                }
-            }
-        }
-        backDispatcher?.addCallback(callback)
-        onDispose {
-            callback.remove()
-        }
-    }
-
 
     Scaffold(
         content = {
@@ -135,6 +106,24 @@ fun HomeScreen(navHostController: NavHostController) {
             }
         }
     )
+
+    //handle back press
+    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    DisposableEffect(backDispatcher) {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isSearchVisible) {
+                    isSearchVisible = !isSearchVisible
+                } else {
+                    val activity = context as? AppCompatActivity
+                    activity?.finish()                }
+            }
+        }
+        backDispatcher?.addCallback(callback)
+        onDispose {
+            callback.remove()
+        }
+    }
 }
 
 @Composable
@@ -233,11 +222,6 @@ fun RecyclerView(
         lazyListState.scrollToItem(0)
     }
     val favoriteIds by favoriteIdViewModel.favoriteIdsFlow.collectAsState(emptyList())
-
-    LaunchedEffect(key1 = favoriteIds) {
-        Log.d("taggg","favids refreshed : $favoriteIds")
-            movies.refresh()
-    }
 
     LazyVerticalGrid(
         state = lazyListState,

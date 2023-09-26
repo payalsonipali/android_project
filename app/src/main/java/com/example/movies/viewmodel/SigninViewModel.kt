@@ -11,16 +11,12 @@ import com.example.movies.model.GoogleSignInState
 import com.example.movies.model.SignInState
 import com.example.movies.repository.AuthRepository
 import com.example.movies.utils.Resource
-import com.example.movies.view.botoomNavScreens.BottomBarScreens
-import com.example.movies.view.botoomNavScreens.Screens
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

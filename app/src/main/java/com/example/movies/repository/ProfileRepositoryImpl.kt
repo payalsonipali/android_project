@@ -90,7 +90,7 @@ class ProfileRepositoryImpl @Inject constructor(
         auth.signOut()
     }
 
-    private fun removeDataFromSharedPrefrence(){
+    private fun removeDataFromSharedPrefrence() {
         val editor = sharedPreferences.edit()
         editor.remove("isLoggedIn")
         editor.remove("uid")

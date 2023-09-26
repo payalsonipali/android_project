@@ -1,7 +1,6 @@
 package com.example.movies.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.example.movies.model.Backdrops
 import com.example.movies.model.Genre
@@ -9,14 +8,13 @@ import com.example.movies.model.Movie
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-@Entity(tableName = "favorite_movies")
+@Entity(tableName = "favorite_movies", primaryKeys = ["uid", "id"])
 data class Favorite(
-    @PrimaryKey(autoGenerate = true)
+    val uid: String ="",
     val id: Long = 0,
     val movie: Movie,
 ) {
 }
-
 
 class CombinedTypeConverter {
     private val gson = Gson()

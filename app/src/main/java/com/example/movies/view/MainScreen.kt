@@ -19,8 +19,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.movies.ui.theme.grey
 import com.example.movies.ui.theme.light_grey
-import com.example.movies.view.botoomNavScreens.BottomBarScreens
-import com.example.movies.view.botoomNavScreens.BottomNavGraph
+import com.example.movies.view.Nav.BottomBarScreens
+import com.example.movies.view.Nav.BottomNavGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

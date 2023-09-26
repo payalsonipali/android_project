@@ -1,4 +1,4 @@
-package com.example.movies.view.botoomNavScreens
+package com.example.movies.view.Common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

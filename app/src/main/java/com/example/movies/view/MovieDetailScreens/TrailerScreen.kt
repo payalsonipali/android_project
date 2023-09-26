@@ -1,4 +1,4 @@
-package com.example.movies.view.botoomNavScreens
+package com.example.movies.view.MovieDetailScreens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

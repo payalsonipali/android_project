@@ -1,7 +1,6 @@
 package com.example.movies.viewmodel
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,10 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import com.example.movies.model.ProfileState
 import com.example.movies.model.UpdateProfileState
-import com.example.movies.repository.AuthRepository
 import com.example.movies.repository.ProfileRepository
 import com.example.movies.utils.Resource
-import com.example.movies.view.botoomNavScreens.Screens
+import com.example.movies.view.Nav.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
