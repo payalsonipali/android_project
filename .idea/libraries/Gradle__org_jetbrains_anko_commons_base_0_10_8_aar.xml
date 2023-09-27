@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.anko:commons-base:0.10.8@aar">
+    <CLASSES>
+      <root url="file://$APPLICATION_HOME_DIR$/jre/caches/transforms-3/73f0783fd0e7ce5876f2ad9ae51dd30c/transformed/jetified-commons-base-0.10.8/AndroidManifest.xml" />
+      <root url="jar://$APPLICATION_HOME_DIR$/jre/caches/transforms-3/73f0783fd0e7ce5876f2ad9ae51dd30c/transformed/jetified-commons-base-0.10.8/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$APPLICATION_HOME_DIR$/jre/caches/modules-2/files-2.1/org.jetbrains.anko/commons-base/0.10.8/a7b9886dd34c114aebcbcd7c492855425b2300e1/commons-base-0.10.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
