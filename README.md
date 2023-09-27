@@ -11,4 +11,5 @@
 ![photo_2023-09-03_17-55-30](https://github.com/payalsonipali/android_project/assets/45533629/4db18d0d-4f5c-411c-9ae4-02865d054a06)
 
 - Handled errors smoothly
+  
 ![photo_2023-09-03_18-04-31](https://github.com/payalsonipali/android_project/assets/45533629/612567a9-7f0e-4f1b-aada-6e1ce9758968)
